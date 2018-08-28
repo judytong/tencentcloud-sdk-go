@@ -13,7 +13,7 @@ type Client struct {
 	region      string
 	httpClient  *http.Client
 	httpProfile *profile.HttpProfile
-	credential  *Credential
+	credential  CredentialInterface
 	signMethod  string
 	debug       bool
 }
@@ -42,7 +42,7 @@ func (c *Client) Send(request tchttp.Request, response tchttp.Response) (err err
 	if request.GetHttpMethod() == "POST" {
 		httpRequest.Header["Content-Type"] = []string{"application/x-www-form-urlencoded"}
 	}
-	//log.Printf("[DEBUG] http request=%v", httpRequest)
+	log.Printf("[DEBUG] http request=%v", httpRequest)
 	httpResponse, err := c.httpClient.Do(httpRequest)
 	if err != nil {
 		return err
@@ -85,4 +85,10 @@ func NewClientWithSecretId(secretId, secretKey, region string) (client *Client, 
 	client = &Client{}
 	client.Init(region).WithSecretId(secretId, secretKey)
 	return
+}
+
+func (c *Client) WithTokenSecretId() *Client {
+	tokenCredential := TokenCredential{expiredAt: time.Now()}
+	c.credential = &tokenCredential
+	return c
 }

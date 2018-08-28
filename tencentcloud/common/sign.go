@@ -27,18 +27,18 @@ func Sign(s, secretKey, method string) string {
 	return base64.StdEncoding.EncodeToString(hashed.Sum(nil))
 }
 
-func signRequest(request tchttp.Request, credential *Credential, method string) (err error) {
+func signRequest(request tchttp.Request, credential CredentialInterface, method string) (err error) {
 	if method != SHA256 {
 		method = SHA1
 	}
 	checkAuthParams(request, credential, method)
 	s := getStringToSign(request)
-	signature := Sign(s, credential.SecretKey, method)
+	signature := Sign(s, credential.GetSecretKey(), method)
 	request.GetParams()["Signature"] = signature
 	return
 }
 
-func checkAuthParams(request tchttp.Request, credential *Credential, method string) {
+func checkAuthParams(request tchttp.Request, credential CredentialInterface, method string) {
 	params := request.GetParams()
 	credentialParams := credential.GetCredentialParams()
 	for key, value := range credentialParams {

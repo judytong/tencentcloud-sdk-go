@@ -3,6 +3,7 @@ package common
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	// "log"
 	"net/http"
 
@@ -59,7 +60,7 @@ func ParseFromHttpResponse(hr *http.Response, response Response) (err error) {
 	if err != nil {
 		return
 	}
-	//log.Printf("[DEBUG] Response Body=%s", body)
+	log.Printf("[DEBUG] Response Body=%s", body)
 	err = response.ParseErrorFromHTTPResponse(body)
 	if err != nil {
 		return
